@@ -1,4 +1,10 @@
 build/
+build-*/
+install/
 __pycache__/
 *.pyc
 .coverage
+coverage.xml
+coverage_html/
+.ruff_cache/
+*.gcov.json.gz

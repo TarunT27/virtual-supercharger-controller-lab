@@ -1,0 +1,9 @@
+.git
+.github
+build
+build-*
+__pycache__
+.coverage
+coverage_html
+docs
+*.pyc

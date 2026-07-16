@@ -1,18 +1,85 @@
 name: tests
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
+      - name: Install quality tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y cppcheck
+          python -m pip install coverage==7.15.2 gcovr==8.3 mypy==1.20.2 ruff==0.15.21
+      - name: Configure C++ coverage build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
       - name: Build C++ controller
-        run: cmake -S . -B build && cmake --build build
-      - name: Test C++ controller
+        run: cmake --build build --parallel
+      - name: Run C++ and cross-language tests
         run: ctest --test-dir build --output-on-failure
-      - name: Test Python orchestrator
+      - name: Enforce C++ line coverage
+        run: gcovr --root . --filter 'src/' --exclude 'src/main.cpp' --fail-under-line 80
+      - name: Run Python tests with coverage
+        run: |
+          python -m coverage run -m unittest discover -s tests -p "test_*.py"
+          python -m coverage report --include="python/*" --fail-under=80
+      - name: Lint Python
+        run: python -m ruff check python tests
+      - name: Verify formatting
+        run: python -m ruff format --check python tests
+      - name: Type-check Python
+        run: python -m mypy --strict python/orchestrator.py tests/e2e_lab.py
+      - name: Analyze C++
+        run: cppcheck --enable=warning,style,performance,portability --std=c++20 --error-exitcode=1 --suppress=missingIncludeSystem --inline-suppr src tests/controller_test.cpp tests/protocol_test.cpp
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - name: Configure sanitizer build
+        run: cmake -S . -B build-sanitized -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
+      - name: Build
+        run: cmake --build build-sanitized --parallel
+      - name: Run native unit tests under ASan and UBSan
+        run: ctest --test-dir build-sanitized -L unit --output-on-failure
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13"
+      - name: Configure
+        run: cmake -S . -B build
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Test native and cross-language behavior
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Test Python control plane
         run: python -m unittest discover -s tests -p "test_*.py"
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - name: Build image
+        run: docker build -t virtual-supercharger-lab:test .
+      - name: Run three-controller smoke scenario
+        run: docker run --rm virtual-supercharger-lab:test

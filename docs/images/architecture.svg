@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650" role="img" aria-labelledby="title desc">
+  <title id="title">Virtual Supercharger Controller Lab architecture</title>
+  <desc id="desc">Python orchestration connects over loopback JSON TCP to three C++ controller processes, each with network, state, and telemetry workers.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071526"/><stop offset="1" stop-color="#10283d"/></linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#15354d"/><stop offset="1" stop-color="#0e2436"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#56d7e9"/></marker>
+  </defs>
+  <rect width="1400" height="650" rx="28" fill="url(#bg)"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="65" y="70" fill="#f5fbff" font-size="31" font-weight="700">Virtual Supercharger Controller Lab</text>
+    <text x="65" y="102" fill="#9bb6c8" font-size="17">Local system-in-the-loop simulation • versioned JSON/TCP • deterministic recovery</text>
+    <rect x="65" y="180" width="310" height="310" rx="22" fill="url(#panel)" stroke="#56d7e9" stroke-width="2"/>
+    <circle cx="108" cy="227" r="10" fill="#56d7e9"/><text x="135" y="236" fill="#f5fbff" font-size="24" font-weight="700">Python orchestrator</text>
+    <text x="105" y="292" fill="#c9dce7" font-size="18">Fleet launch + readiness</text><text x="105" y="336" fill="#c9dce7" font-size="18">Session + power scenarios</text>
+    <text x="105" y="380" fill="#c9dce7" font-size="18">Fault injection + detection</text><text x="105" y="424" fill="#c9dce7" font-size="18">Recovery + safe cleanup</text>
+    <line x1="375" y1="335" x2="535" y2="335" stroke="#56d7e9" stroke-width="4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <rect x="405" y="280" width="100" height="110" rx="16" fill="#071526" stroke="#efad4d" stroke-width="2"/>
+    <text x="455" y="316" text-anchor="middle" fill="#efad4d" font-size="16" font-weight="700">TCP</text><text x="455" y="345" text-anchor="middle" fill="#e7f3f8" font-size="15">JSON lines</text><text x="455" y="372" text-anchor="middle" fill="#9bb6c8" font-size="13">127.0.0.1</text>
+    <symbol id="process" viewBox="0 0 800 145">
+      <rect width="800" height="145" rx="20" fill="url(#panel)" stroke="#2f6e8a" stroke-width="2"/>
+      <circle cx="40" cy="41" r="9" fill="#56d7e9"/>
+      <rect x="40" y="76" width="145" height="42" rx="10" fill="#0a1c2a" stroke="#56d7e9"/><rect x="205" y="76" width="145" height="42" rx="10" fill="#0a1c2a" stroke="#efad4d"/><rect x="370" y="76" width="145" height="42" rx="10" fill="#0a1c2a" stroke="#56d7e9"/><rect x="550" y="61" width="210" height="58" rx="13" fill="#173c45" stroke="#69e0bd"/>
+      <text x="112" y="103" text-anchor="middle" fill="#d8edf4" font-size="15">network worker</text><text x="277" y="103" text-anchor="middle" fill="#d8edf4" font-size="15">state worker</text><text x="442" y="103" text-anchor="middle" fill="#d8edf4" font-size="15">telemetry worker</text><text x="655" y="96" text-anchor="middle" fill="#e9fff8" font-size="16" font-weight="700">thread-safe controller</text>
+    </symbol>
+    <use href="#process" x="535" y="140" width="800" height="145"/><use href="#process" x="535" y="307" width="800" height="145"/><use href="#process" x="535" y="474" width="800" height="145"/>
+    <text x="600" y="182" fill="#f5fbff" font-size="21" font-weight="700">C++ controller process :9000</text><text x="600" y="349" fill="#f5fbff" font-size="21" font-weight="700">C++ controller process :9001</text><text x="600" y="516" fill="#f5fbff" font-size="21" font-weight="700">C++ controller process :9002</text>
+    <path d="M510 335C525 335 525 213 535 213M510 335 535 380M510 335C525 335 525 547 535 547" fill="none" stroke="#56d7e9" stroke-width="3" marker-end="url(#arrow)"/>
+  </g>
+</svg>
